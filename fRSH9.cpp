@@ -13,26 +13,29 @@
 #include <dos.h>
 #include <stdio.h>
 #include <string.h>
+#include <cstring>
 #include <iostream>
-#include <windows.h>
-#include <cmath>
-
+//#include <windows.h>
+#include <afxext.h>
 
 using namespace std;
 
 #define MAX_LOADSTRING 100
 
 // Глобальные переменные:
-HINSTANCE hInst;                                // текущий экземпляр
+HINSTANCE hInst;    
+CDialogBar MyDialogBar;
+
+// текущий экземпляр
 WCHAR szTitle[MAX_LOADSTRING];                  // Текст строки заголовка
 WCHAR szWindowClass[MAX_LOADSTRING];            // имя класса главного окна
-
+int Cmdf;
 // Отправить объявления функций, включенных в этот модуль кода:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
+INT_PTR CALLBACK    aDlgBar(HWND, UINT, WPARAM, LPARAM);
 // Глобальные переменные:
 
 #define M_PI 3.14
@@ -51,6 +54,7 @@ double DX;
 double DY;
 int pg = 0;
 HDC hdc;
+int saf = 0;
 
 struct v3
 {
@@ -1164,6 +1168,10 @@ int mainris(HDC hdc)
     //struct ffblk ffblk;
     //strcpy(fdat, "");
     //ch = 'n';
+    HRGN hrgn = CreateRectRgn(0, 0, 640, 480);
+    HBRUSH hbr = CreateSolidBrush(RGB(0, 0, 0));
+    FillRgn(hdc, hrgn, hbr);
+
     int DR2 = MessageBoxW(HWND_DESKTOP, L"Фрактал  из шаров? - нажать Yes, из кругов - NO.", L"Вопрос", MB_YESNO);
     if (DR2 == 6) ch = 'b'; else  ch = 'n';
 
@@ -1195,12 +1203,7 @@ int mainris(HDC hdc)
     srand(sd);
 
     //InitEl();
-    //HWND hwnd = GetConsoleWindow();
-    //HDC hdc = GetDC(hwnd);
-    //HDC hdc2 = GetDC(hwnd);
-    HRGN hrgn = CreateRectRgn(0, 0, 640, 480);
-    HBRUSH hbr = CreateSolidBrush(RGB(0, 0, 0));
-
+ 
     InitAgr();
     MakeArray(N);
     if (needLoad) Load(); else InitParticle();
@@ -1230,7 +1233,6 @@ int mainris(HDC hdc)
            // if ((te >= dt) || (Ie == 1)) { te = 0; Se = false; }
         }
         //ElAbsorbe();
-        if (_kbhit()) ch = _getch();
         switch (ch)
         {
         case ('n'): {
@@ -1249,11 +1251,9 @@ int mainris(HDC hdc)
         if (pg == 10) pg = 0;
 
         //if (s == 10){break; }
-
-        if (ch == 'q') break;
-        if (t > 1) break;
+        if (t > 0.1) break;
     } while (0 == 0);
-
+    
     Save();
 
     int f;
@@ -1264,7 +1264,7 @@ int mainris(HDC hdc)
     _write(f, &sd, sizeof(sd));
     _close(f);
     std::cout << " sd=" << sd;
-    _getwch();
+    _getch();
 
     DeleteObject(hbr);
     DeleteObject(hrgn);
@@ -1281,6 +1281,7 @@ int mainris(HDC hdc)
     //getch();
     return TRUE;
 }
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -1290,7 +1291,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Разместите код здесь.
-
+        
     // Инициализация глобальных строк
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_FRSH9, szWindowClass, MAX_LOADSTRING);
@@ -1360,10 +1361,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
-
+   Cmdf = nCmdShow;
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       0, 0, 655, 535, nullptr, nullptr, hInstance, nullptr);
-
    if (!hWnd)
    {
       return FALSE;
@@ -1371,7 +1371,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-
    return TRUE;
 }
 
@@ -1385,21 +1384,37 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - отправить сообщение о выходе и вернуться
 //
 //
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_COMMAND:
+        case WM_CREATE:
+        {  
+        //CString StrNpat;
+        //    MyDialogBar = new CDialogBar();
+        //    CWnd myWnd;
+      
+        //    MyDialogBar.Create(myWnd.FromHandle(hWnd), IDD_DIALOG1, CBRS_TOP, IDD_DIALOG1);
+        //    _itot_s(N, StrNpat.GetBufferSetLength(4), sizeof(&StrNpat), 10);
+        //    MyDialogBar.GetDlgItem(IDC_EDIT1)->SetWindowText((LPCTSTR)StrNpat);
+        }
+
+        case WM_COMMAND:
         {
+
             int wmId = LOWORD(wParam);
             // Разобрать выбор в меню:
             switch (wmId)
             {
-            case IDM_NEW:
-                
+            case IDM_DIALOG1:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, aDlgBar);
                 break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+            case IDM_NEW2:
+                InitInstance(hInst, Cmdf);
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
@@ -1407,17 +1422,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
+            break;
         }
-        break;
         case WM_PAINT:
         {    
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             mainris(hdc);
             // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
+            
             EndPaint(hWnd, &ps);
+            ReleaseDC(hWnd, hdc);
         }
         break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -1430,6 +1448,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 // Обработчик сообщений для окна "О программе".
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
     {
@@ -1440,6 +1459,35 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+ 
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK aDlgBar(HWND hDlg2, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg2, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        if (LOWORD(wParam) == IDC_EDIT1)
+        {
+            CWnd MyWnd;
+            CString strNpat;
+            CWnd* hDlgCW = MyWnd.FromHandle(hDlg2);
+            hDlgCW->GetDlgItem(IDC_EDIT1)->GetWindowTextW(strNpat);
+            N = _tstoi(strNpat);
             return (INT_PTR)TRUE;
         }
         break;
