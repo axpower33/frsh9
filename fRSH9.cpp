@@ -24,7 +24,7 @@ using namespace std;
 
 // Глобальные переменные:
 HINSTANCE hInst;    
-CDialogBar MyDialogBar;
+CDialog* MyDialogBar;
 
 // текущий экземпляр
 WCHAR szTitle[MAX_LOADSTRING];                  // Текст строки заголовка
@@ -1391,13 +1391,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {  
-        //CString StrNpat;
-        //    MyDialogBar = new CDialogBar();
-        //    CWnd myWnd;
-      
-        //    MyDialogBar.Create(myWnd.FromHandle(hWnd), IDD_DIALOG1, CBRS_TOP, IDD_DIALOG1);
-        //    _itot_s(N, StrNpat.GetBufferSetLength(4), sizeof(&StrNpat), 10);
-        //    MyDialogBar.GetDlgItem(IDC_EDIT1)->SetWindowText((LPCTSTR)StrNpat);
+            //CString StrNpat;
+            //CWnd myWnd;
+            //MyDialogBar = new CDialog(IDD_DIALOG1, myWnd.FromHandle(hWnd));
+            //MyDialogBar->GetDlgItem(IDC_EDIT1)->SetWindowText(L"50");
+            //MyDialogBar->DoModal();
+           // _itot_s(N, StrNpat.GetBufferSetLength(4), sizeof(&StrNpat), 10);
         }
 
         case WM_COMMAND:
