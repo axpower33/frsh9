@@ -1371,6 +1371,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+
    return TRUE;
 }
 
@@ -1389,16 +1390,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-        case WM_CREATE:
-        {  
-            //CString StrNpat;
-            //CWnd myWnd;
-            //MyDialogBar = new CDialog(IDD_DIALOG1, myWnd.FromHandle(hWnd));
-            //MyDialogBar->GetDlgItem(IDC_EDIT1)->SetWindowText(L"50");
-            //MyDialogBar->DoModal();
-           // _itot_s(N, StrNpat.GetBufferSetLength(4), sizeof(&StrNpat), 10);
-        }
-
         case WM_COMMAND:
         {
 
@@ -1452,8 +1443,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
+      return (INT_PTR)TRUE;
+    
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
@@ -1470,10 +1461,17 @@ INT_PTR CALLBACK aDlgBar(HWND hDlg2, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
-    {
+    { 
     case WM_INITDIALOG:
+    { 
+        CWnd MyWnd;
+        CString strNpat;
+        _itot_s(N, strNpat.GetBufferSetLength(4), sizeof(&strNpat), 10);
+        CWnd* hDlgCW = MyWnd.FromHandle(hDlg2);
+        hDlgCW->GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
         return (INT_PTR)TRUE;
-
+    }
+  
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
