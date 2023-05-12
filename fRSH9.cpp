@@ -55,6 +55,7 @@ double DY;
 int pg = 0;
 HDC hdc;
 int saf = 0;
+double ta=0.1;
 
 struct v3
 {
@@ -1251,7 +1252,7 @@ int mainris(HDC hdc)
         if (pg == 10) pg = 0;
 
         //if (s == 10){break; }
-        if (t > 0.1) break;
+        if (t > ta) break;
     } while (0 == 0);
     
     Save();
@@ -1465,10 +1466,13 @@ INT_PTR CALLBACK aDlgBar(HWND hDlg2, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_INITDIALOG:
     { 
         CWnd MyWnd;
-        CString strNpat;
+        CString strNpat, strta;
         _itot_s(N, strNpat.GetBufferSetLength(4), sizeof(&strNpat), 10);
+        //_wtof(ta, strta.GetBufferSetLength(10), sizeof(&strNpat),10);
+        strta.Format(_T("%lf"), ta);
         CWnd* hDlgCW = MyWnd.FromHandle(hDlg2);
         hDlgCW->GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
+        hDlgCW->GetDlgItem(IDC_EDIT2)->SetWindowTextW((LPCTSTR)strta);
         return (INT_PTR)TRUE;
     }
   
@@ -1487,6 +1491,16 @@ INT_PTR CALLBACK aDlgBar(HWND hDlg2, UINT message, WPARAM wParam, LPARAM lParam)
             N = _tstoi(strNpat);
             return (INT_PTR)TRUE;
         }
+        if (LOWORD(wParam) == IDC_EDIT2)
+        {
+            CWnd MyWnd;
+            CString strta;
+            CWnd* hDlgCW = MyWnd.FromHandle(hDlg2);
+            hDlgCW->GetDlgItem(IDC_EDIT2)->GetWindowTextW(strta);
+            ta= _tstof(strta);
+            return (INT_PTR)TRUE;
+        }
+
         break;
     }
     return (INT_PTR)FALSE;
